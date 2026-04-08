@@ -24,6 +24,7 @@
   --color-chart-1: #6366f1;
   --radius: 0.75rem;
   --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
   --color-accent-foreground: #e8e8ed;
   --color-accent: rgba(255, 255, 255, 0.05);
   --color-muted-foreground: #8b8b95;
