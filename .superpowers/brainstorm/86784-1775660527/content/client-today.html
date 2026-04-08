@@ -1,0 +1,185 @@
+<h2>Client: Today's Schedule (/client)</h2>
+<p class="subtitle">The main client page — daily timeline with meals, workout, water, supplements</p>
+
+<div class="mockup">
+  <div class="mockup-header">Mobile View — Training Day</div>
+  <div class="mockup-body" style="background: #0a0a0f; color: #e8e8ed; font-family: 'DM Sans', system-ui, sans-serif; padding: 20px; max-width: 420px; margin: 0 auto;">
+
+    <!-- Date Header -->
+    <div style="text-align: center; margin-bottom: 20px;">
+      <div style="font-size: 13px; color: #8b8b95; text-transform: uppercase; letter-spacing: 1px;">Ponedeljak</div>
+      <div style="font-size: 22px; font-weight: 600;">08.04.2026.</div>
+      <div style="display: inline-block; background: #6366f1; color: white; padding: 4px 14px; border-radius: 20px; font-size: 13px; margin-top: 6px;">
+        🏋️ Trening A — Čučanj / Vučenje / Ramena
+      </div>
+    </div>
+
+    <!-- Quick Stats Bar -->
+    <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+      <div style="flex:1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px; text-align: center;">
+        <div style="font-size: 11px; color: #8b8b95;">Voda</div>
+        <div style="font-size: 18px; font-weight: 600; font-family: 'Space Mono', monospace; color: #22c55e;">1.5L</div>
+        <div style="font-size: 11px; color: #8b8b95;">/ 3.5L</div>
+      </div>
+      <div style="flex:1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px; text-align: center;">
+        <div style="font-size: 11px; color: #8b8b95;">Protein</div>
+        <div style="font-size: 18px; font-weight: 600; font-family: 'Space Mono', monospace; color: #8b5cf6;">40g</div>
+        <div style="font-size: 11px; color: #8b8b95;">/ 170g</div>
+      </div>
+      <div style="flex:1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px; text-align: center;">
+        <div style="font-size: 11px; color: #8b8b95;">Kalorije</div>
+        <div style="font-size: 18px; font-weight: 600; font-family: 'Space Mono', monospace; color: #f59e0b;">460</div>
+        <div style="font-size: 11px; color: #8b8b95;">/ 1950</div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div style="position: relative; padding-left: 28px;">
+      <!-- Timeline line -->
+      <div style="position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.08);"></div>
+
+      <!-- 07:30 Water -->
+      <div style="position: relative; margin-bottom: 16px;">
+        <div style="position: absolute; left: -24px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #22c55e; border: 2px solid #0a0a0f;"></div>
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <span style="font-size: 12px; color: #8b8b95; font-family: 'Space Mono', monospace;">07:30</span>
+              <span style="margin-left: 8px;">💧 Pola litra vode po buđenju</span>
+            </div>
+            <div style="color: #22c55e; font-size: 18px;">✓</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 08:00 Workout -->
+      <div style="position: relative; margin-bottom: 16px;">
+        <div style="position: absolute; left: -24px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #6366f1; border: 2px solid #0a0a0f;"></div>
+        <div style="background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 12px; cursor: pointer;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <span style="font-size: 12px; color: #8b8b95; font-family: 'Space Mono', monospace;">08:00</span>
+              <span style="margin-left: 8px; font-weight: 600;">🏋️ Trening A</span>
+            </div>
+            <div style="color: #6366f1; font-size: 13px;">Započni →</div>
+          </div>
+          <div style="font-size: 13px; color: #8b8b95; margin-top: 4px; margin-left: 44px;">Čučanj / Vučenje / Ramena</div>
+        </div>
+      </div>
+
+      <!-- 08:30 Intra Workout -->
+      <div style="position: relative; margin-bottom: 16px;">
+        <div style="position: absolute; left: -24px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 2px solid #0a0a0f;"></div>
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;">
+          <span style="font-size: 12px; color: #8b8b95; font-family: 'Space Mono', monospace;">08:30</span>
+          <span style="margin-left: 8px;">🥤 Intra workout</span>
+          <div style="font-size: 13px; color: #8b8b95; margin-top: 4px; margin-left: 44px;">15g EAA + 5g kreatin</div>
+          <div style="margin-top: 6px; margin-left: 44px; display: flex; gap: 12px; font-size: 12px; font-family: 'Space Mono', monospace;">
+            <span style="color: #8b5cf6;">P: 15g</span>
+            <span style="color: #f59e0b;">C: 0g</span>
+            <span style="color: #22c55e;">F: 0g</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 08:50 Post Workout -->
+      <div style="position: relative; margin-bottom: 16px;">
+        <div style="position: absolute; left: -24px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 2px solid #0a0a0f;"></div>
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;">
+          <span style="font-size: 12px; color: #8b8b95; font-family: 'Space Mono', monospace;">08:50</span>
+          <span style="margin-left: 8px;">🍽️ Post workout (Obrok 1)</span>
+          <div style="margin-top: 6px; margin-left: 44px; display: flex; gap: 12px; font-size: 12px; font-family: 'Space Mono', monospace;">
+            <span style="color: #8b5cf6;">P: 25g</span>
+            <span style="color: #f59e0b;">C: 40g</span>
+            <span style="color: #22c55e;">F: 0g</span>
+          </div>
+          <div style="font-size: 13px; color: #e8e8ed; margin-top: 6px; margin-left: 44px; padding: 8px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+            30g whey protein + 200g banana
+          </div>
+        </div>
+      </div>
+
+      <!-- 12:00 Lunch -->
+      <div style="position: relative; margin-bottom: 16px;">
+        <div style="position: absolute; left: -24px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 2px solid #0a0a0f;"></div>
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;">
+          <span style="font-size: 12px; color: #8b8b95; font-family: 'Space Mono', monospace;">12:00</span>
+          <span style="margin-left: 8px;">🍽️ Ručak (Obrok 2)</span>
+          <div style="margin-top: 6px; margin-left: 44px; display: flex; gap: 12px; font-size: 12px; font-family: 'Space Mono', monospace;">
+            <span style="color: #8b5cf6;">P: 60g</span>
+            <span style="color: #f59e0b;">C: 45g</span>
+            <span style="color: #22c55e;">F: 25g</span>
+          </div>
+          <div style="margin-top: 6px; margin-left: 44px;">
+            <div style="font-size: 12px; color: #6366f1; margin-bottom: 4px;">Opcija 1:</div>
+            <div style="font-size: 13px; color: #c8c8cd; padding: 6px 8px; background: rgba(255,255,255,0.03); border-radius: 6px; margin-bottom: 4px;">250g piletina na žaru + 250g krompir + salata + 20ml maslinovo ulje</div>
+            <div style="font-size: 12px; color: #6366f1; margin-bottom: 4px;">Opcija 2:</div>
+            <div style="font-size: 13px; color: #c8c8cd; padding: 6px 8px; background: rgba(255,255,255,0.03); border-radius: 6px;">200g crveno meso + 250g krompir/150g pirinac + salata + 20ml ulje</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 15:00 Snack -->
+      <div style="position: relative; margin-bottom: 16px;">
+        <div style="position: absolute; left: -24px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 2px solid #0a0a0f;"></div>
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;">
+          <span style="font-size: 12px; color: #8b8b95; font-family: 'Space Mono', monospace;">15:00</span>
+          <span style="margin-left: 8px;">🍽️ Užina (Obrok 3)</span>
+          <div style="margin-top: 6px; margin-left: 44px; display: flex; gap: 12px; font-size: 12px; font-family: 'Space Mono', monospace;">
+            <span style="color: #8b5cf6;">P: 40g</span>
+            <span style="color: #f59e0b;">C: 27g</span>
+            <span style="color: #22c55e;">F: 25g</span>
+          </div>
+          <div style="font-size: 12px; color: #8b8b95; margin-top: 4px; margin-left: 44px;">3 opcije dostupne</div>
+        </div>
+      </div>
+
+      <!-- 21:00 Dinner -->
+      <div style="position: relative; margin-bottom: 16px;">
+        <div style="position: absolute; left: -24px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 2px solid #0a0a0f;"></div>
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;">
+          <span style="font-size: 12px; color: #8b8b95; font-family: 'Space Mono', monospace;">21:00</span>
+          <span style="margin-left: 8px;">🍽️ Večera (Obrok 4)</span>
+          <div style="margin-top: 6px; margin-left: 44px; display: flex; gap: 12px; font-size: 12px; font-family: 'Space Mono', monospace;">
+            <span style="color: #8b5cf6;">P: 42g</span>
+            <span style="color: #f59e0b;">C: 35g</span>
+            <span style="color: #22c55e;">F: 20g</span>
+          </div>
+          <div style="font-size: 12px; color: #8b8b95; margin-top: 4px; margin-left: 44px;">3 opcije dostupne</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supplements -->
+    <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; margin-top: 8px; margin-bottom: 16px;">
+      <div style="font-weight: 600; margin-bottom: 10px;">💊 Suplementi</div>
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
+        <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" checked style="accent-color: #6366f1;"> Omega 3 — 3 kapsule uz obroke</label>
+        <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" checked style="accent-color: #6366f1;"> Vitamin D — 5000 IU</label>
+        <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" style="accent-color: #6366f1;"> Magnezijum — 300mg uveče</label>
+      </div>
+    </div>
+
+    <!-- Daily Checkboxes -->
+    <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+      <div style="font-weight: 600; margin-bottom: 10px;">✅ Dnevni ciljevi</div>
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
+        <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" style="accent-color: #22c55e;"> Voda (3-4L) — <span style="font-family: 'Space Mono', monospace; color: #f59e0b;">1.5L</span></label>
+        <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" style="accent-color: #22c55e;"> Svi obroci po planu</label>
+        <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" style="accent-color: #22c55e;"> Suplementi</label>
+        <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" style="accent-color: #22c55e;"> Trening</label>
+        <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" style="accent-color: #22c55e;"> Koraci (5000-7000)</label>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div style="display: flex; gap: 8px;">
+      <button style="flex:1; background: #6366f1; color: white; border: none; padding: 12px; border-radius: 12px; font-size: 14px; cursor: pointer;">+ Voda</button>
+      <button style="flex:1; background: rgba(255,255,255,0.08); color: #e8e8ed; border: 1px solid rgba(255,255,255,0.12); padding: 12px; border-radius: 12px; font-size: 14px; cursor: pointer;">+ Obrok</button>
+      <button style="flex:1; background: rgba(255,255,255,0.08); color: #e8e8ed; border: 1px solid rgba(255,255,255,0.12); padding: 12px; border-radius: 12px; font-size: 14px; cursor: pointer;">+ Težina</button>
+    </div>
+
+  </div>
+</div>
+
+<p style="margin-top: 16px; color: #999; font-size: 14px;">This mockup shows a training day. On rest days, the workout card is replaced with a rest/walking reminder and the meal list shows rest-day variants with different macros.</p>
