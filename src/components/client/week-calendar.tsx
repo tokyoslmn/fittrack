@@ -243,7 +243,7 @@ export function WeekCalendar({ initialDays, initialOffset }: WeekCalendarProps) 
   const [offset, setOffset] = useState(initialOffset);
   const [days, setDays] = useState<WeekDay[]>(initialDays);
   const [loading, setLoading] = useState(false);
-  const [expandedDay, setExpandedDay] = useState<number | null>(null);
+  const [collapsedDays, setCollapsedDays] = useState<Set<number>>(new Set());
 
   async function fetchWeek(newOffset: number) {
     setLoading(true);
@@ -253,7 +253,7 @@ export function WeekCalendar({ initialDays, initialOffset }: WeekCalendarProps) 
         const data = await res.json();
         setDays(data.days);
         setOffset(newOffset);
-        setExpandedDay(null);
+        setCollapsedDays(new Set());
       }
     } finally {
       setLoading(false);
@@ -312,8 +312,13 @@ export function WeekCalendar({ initialDays, initialOffset }: WeekCalendarProps) 
             <DayCard
               key={day.date}
               day={day}
-              isExpanded={expandedDay === i}
-              onToggle={() => setExpandedDay(expandedDay === i ? null : i)}
+              isExpanded={!collapsedDays.has(i)}
+              onToggle={() => setCollapsedDays((prev) => {
+                const next = new Set(prev);
+                if (next.has(i)) next.delete(i);
+                else next.add(i);
+                return next;
+              })}
             />
           ))}
         </div>
