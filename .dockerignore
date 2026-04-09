@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.gitignore
+.env.local
+.env.deploy
+.superpowers
+uploads
+docs
+*.md
+!README.md

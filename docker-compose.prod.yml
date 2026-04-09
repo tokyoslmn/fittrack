@@ -1,0 +1,53 @@
+services:
+  app:
+    build: .
+    container_name: fittrack-app
+    environment:
+      - DATABASE_URL=postgresql://fittrack:${DB_PASSWORD}@db:5432/fittrack
+      - AUTH_SECRET=${AUTH_SECRET}
+      - AUTH_TRUST_HOST=true
+      - NEXTAUTH_URL=https://fittrack.kyubix.xyz
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - default
+      - root_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fittrack.rule=Host(`fittrack.kyubix.xyz`)"
+      - "traefik.http.routers.fittrack.entrypoints=web,websecure"
+      - "traefik.http.routers.fittrack.tls.certresolver=mytlschallenge"
+      - "traefik.http.routers.fittrack-http.rule=Host(`fittrack.kyubix.xyz`)"
+      - "traefik.http.routers.fittrack-http.entrypoints=web"
+      - "traefik.http.routers.fittrack-http.middlewares=fittrack-redirect"
+      - "traefik.http.middlewares.fittrack-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.fittrack-redirect.redirectscheme.permanent=true"
+      - "traefik.http.services.fittrack.loadbalancer.server.port=3000"
+
+  db:
+    image: postgres:16-alpine
+    container_name: fittrack-db
+    environment:
+      - POSTGRES_USER=fittrack
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=fittrack
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fittrack"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+networks:
+  root_default:
+    external: true
+
+volumes:
+  pgdata:
+  uploads:
