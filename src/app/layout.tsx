@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Space_Mono } from "next/font/google";
+import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -26,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="sr" className="dark">
       <body className={`${dmSans.variable} ${spaceMono.variable} font-sans antialiased`}>
-        {children}
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );
