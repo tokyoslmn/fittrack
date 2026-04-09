@@ -11,6 +11,7 @@ const trainerLinks = [
 
 const clientLinks = [
   { href: "/client", label: "Danas", icon: "📅" },
+  { href: "/client/schedule", label: "Raspored", icon: "🗓️" },
   { href: "/client/workout", label: "Trening", icon: "🏋️" },
   { href: "/client/nutrition", label: "Ishrana", icon: "🍽️" },
   { href: "/client/log/weight", label: "Težina", icon: "⚖️" },
