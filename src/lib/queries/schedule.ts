@@ -208,9 +208,21 @@ export async function getWeekSchedule(userId: string, weekOffset = 0) {
         carbs: m.carbs,
         fat: m.fat,
         icon: m.icon,
-        options: m.options.map((o) => ({
+        options: m.options.map((o: any) => ({
           optionNumber: o.optionNumber,
           description: o.description,
+          items: o.items?.map((item: any) => ({
+            id: item.id,
+            quantity: item.quantity,
+            foodItem: {
+              name: item.foodItem.name,
+              protein: item.foodItem.protein,
+              carbs: item.foodItem.carbs,
+              fat: item.foodItem.fat,
+              calories: item.foodItem.calories,
+              measuredRaw: item.foodItem.measuredRaw,
+            },
+          })) ?? [],
         })),
       })),
       status: {

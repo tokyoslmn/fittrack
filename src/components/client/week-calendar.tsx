@@ -10,7 +10,18 @@ interface WeekDay {
   dayName: string;
   dayOfWeek: number;
   isTrainingDay: boolean;
-  workout: { name: string; focus: string } | null;
+  workout: {
+    name: string;
+    focus: string;
+    warmups: { name: string; videoUrl: string | null }[];
+    exercises: {
+      exerciseId: string;
+      name: string;
+      sets: string;
+      note: string | null;
+      videoUrl: string | null;
+    }[];
+  } | null;
   label: string;
   restNotes: string | null;
   meals: {
@@ -21,7 +32,22 @@ interface WeekDay {
     carbs: number;
     fat: number;
     icon: string | null;
-    options: { optionNumber: number; description: string }[];
+    options: {
+      optionNumber: number;
+      description: string;
+      items: {
+        id: string;
+        quantity: number;
+        foodItem: {
+          name: string;
+          protein: number;
+          carbs: number;
+          fat: number;
+          calories: number;
+          measuredRaw: boolean;
+        };
+      }[];
+    }[];
   }[];
   status: {
     water: boolean;
@@ -189,9 +215,27 @@ function DayCard({
                   {meal.options.map((opt) => (
                     <div key={opt.optionNumber}>
                       <span className="text-xs text-primary">Opcija {opt.optionNumber}:</span>
-                      <div className="text-xs text-muted-foreground mt-0.5 rounded bg-muted p-1.5">
-                        {opt.description}
-                      </div>
+                      {opt.items && opt.items.length > 0 ? (
+                        <div className="text-xs text-muted-foreground mt-0.5 rounded bg-muted p-1.5 space-y-0.5">
+                          {opt.items.map((item) => {
+                            const factor = item.quantity / 100;
+                            return (
+                              <div key={item.id} className="flex justify-between">
+                                <span>{item.quantity}g {item.foodItem.name}</span>
+                                <span className="font-mono">
+                                  P:{Math.round(item.foodItem.protein * factor)}
+                                  {" "}C:{Math.round(item.foodItem.carbs * factor)}
+                                  {" "}F:{Math.round(item.foodItem.fat * factor)}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="text-xs text-muted-foreground mt-0.5 rounded bg-muted p-1.5">
+                          {opt.description}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -208,10 +252,71 @@ function DayCard({
         </div>
       )}
 
-      {/* Workout focus expanded */}
-      {isExpanded && day.isTrainingDay && day.workout?.focus && (
-        <div className="text-xs text-muted-foreground border-t border-border pt-2 mt-1">
-          Fokus: {day.workout.focus}
+      {/* Workout details expanded */}
+      {isExpanded && day.isTrainingDay && day.workout && (
+        <div className="text-xs border-t border-border pt-2 mt-1 space-y-2">
+          {day.workout.focus && (
+            <div className="text-muted-foreground">Fokus: {day.workout.focus}</div>
+          )}
+
+          {/* Warmups */}
+          {day.workout.warmups?.length > 0 && (
+            <div>
+              <div className="font-semibold text-muted-foreground mb-1">Zagrevanje</div>
+              <div className="space-y-0.5">
+                {day.workout.warmups.map((w, i) => (
+                  <div key={i} className="flex items-center gap-1.5 text-muted-foreground">
+                    <span>{w.name}</span>
+                    {w.videoUrl && (
+                      <a
+                        href={w.videoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        ▶ Video
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Exercises */}
+          {day.workout.exercises?.length > 0 && (
+            <div>
+              <div className="font-semibold text-muted-foreground mb-1">Vežbe</div>
+              <div className="space-y-1">
+                {day.workout.exercises.map((ex) => (
+                  <div key={ex.exerciseId} className="flex flex-col gap-0.5 rounded-lg border border-border bg-card p-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-mono text-primary font-semibold">{ex.exerciseId}</span>
+                      <span className="text-foreground">{ex.name}</span>
+                      <span className="font-mono text-muted-foreground ml-auto shrink-0">{ex.sets}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {ex.note && (
+                        <span className="text-muted-foreground italic">{ex.note}</span>
+                      )}
+                      {ex.videoUrl && (
+                        <a
+                          href={ex.videoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline ml-auto shrink-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          ▶ Video
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
