@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 const trainerLinks = [
   { href: "/trainer", label: "Klijenti", icon: "👥" },
+  { href: "/namirnice", label: "Namirnice", icon: "🥘" },
 ];
 
 const clientLinks = [
@@ -14,6 +15,7 @@ const clientLinks = [
   { href: "/client/schedule", label: "Raspored", icon: "🗓️" },
   { href: "/client/workout", label: "Trening", icon: "🏋️" },
   { href: "/client/nutrition", label: "Ishrana", icon: "🍽️" },
+  { href: "/namirnice", label: "Namirnice", icon: "🥘" },
   { href: "/client/log/weight", label: "Težina", icon: "⚖️" },
   { href: "/client/log/water", label: "Voda", icon: "💧" },
   { href: "/client/log/food", label: "Dnevnik", icon: "📝" },
