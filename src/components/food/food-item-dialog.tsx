@@ -158,7 +158,7 @@ export function FoodItemDialog({
 
           <div className="space-y-1.5">
             <Label>Kategorija</Label>
-            <Select value={category} onValueChange={setCategory}>
+            <Select value={category} onValueChange={(v) => setCategory(v ?? "")}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Izaberi kategoriju" />
               </SelectTrigger>
