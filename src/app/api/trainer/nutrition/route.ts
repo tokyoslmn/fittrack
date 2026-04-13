@@ -3,9 +3,15 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
+const ingredientItemSchema = z.object({
+  foodItemId: z.string(),
+  quantity: z.number().positive(),
+});
+
 const mealOptionSchema = z.object({
   optionNumber: z.number().int().positive(),
-  description: z.string().min(1),
+  description: z.string(),
+  ingredients: z.array(ingredientItemSchema).default([]),
 });
 
 const mealSchema = z.object({
@@ -82,7 +88,17 @@ export async function POST(request: Request) {
             fat: meal.fat,
             icon: meal.icon,
             options: {
-              create: meal.options,
+              create: meal.options.map((opt) => ({
+                optionNumber: opt.optionNumber,
+                description: opt.description,
+                items: {
+                  create: opt.ingredients.map((ing, idx) => ({
+                    foodItemId: ing.foodItemId,
+                    quantity: ing.quantity,
+                    orderIndex: idx,
+                  })),
+                },
+              })),
             },
           })),
         },
@@ -90,7 +106,16 @@ export async function POST(request: Request) {
           create: data.supplements,
         },
       },
-      include: { meals: { include: { options: true } }, supplements: true },
+      include: {
+        meals: {
+          include: {
+            options: {
+              include: { items: { include: { foodItem: true } } },
+            },
+          },
+        },
+        supplements: true,
+      },
     });
 
     return NextResponse.json(plan);

@@ -101,7 +101,12 @@ export async function getClientNutritionPlan(trainerId: string, clientId: string
     where: { clientId, active: true },
     include: {
       meals: {
-        include: { options: { orderBy: { optionNumber: "asc" } } },
+        include: {
+          options: {
+            orderBy: { optionNumber: "asc" },
+            include: { items: { orderBy: { orderIndex: "asc" }, include: { foodItem: true } } },
+          },
+        },
         orderBy: { orderIndex: "asc" },
       },
       supplements: true,

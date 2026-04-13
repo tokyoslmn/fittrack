@@ -34,6 +34,18 @@ export default async function NutritionEditorPage({
           options: m.options.map((o) => ({
             optionNumber: o.optionNumber,
             description: o.description,
+            ingredients: (o.items ?? []).map((item) => {
+              const factor = item.quantity / 100;
+              return {
+                foodItemId: item.foodItemId,
+                foodItemName: item.foodItem.name,
+                quantity: item.quantity,
+                protein: Math.round(item.foodItem.protein * factor * 10) / 10,
+                carbs: Math.round(item.foodItem.carbs * factor * 10) / 10,
+                fat: Math.round(item.foodItem.fat * factor * 10) / 10,
+                calories: Math.round(item.foodItem.calories * factor),
+              };
+            }),
           })),
         })),
         supplements: plan.supplements.map((s) => ({

@@ -5,10 +5,22 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { IngredientPicker } from "@/components/food/ingredient-picker";
+
+interface IngredientItemData {
+  foodItemId: string;
+  foodItemName: string;
+  quantity: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  calories: number;
+}
 
 interface MealOption {
   optionNumber: number;
   description: string;
+  ingredients: IngredientItemData[];
 }
 
 interface MealData {
@@ -90,7 +102,7 @@ export function NutritionEditor({ clientId, initialData }: NutritionEditorProps)
           carbs: 0,
           fat: 0,
           icon: "🍽️",
-          options: [{ optionNumber: 1, description: "" }],
+          options: [{ optionNumber: 1, description: "", ingredients: [] }],
         },
       ],
     }));
@@ -115,14 +127,22 @@ export function NutritionEditor({ clientId, initialData }: NutritionEditorProps)
     const newOpt: MealOption = {
       optionNumber: meal.options.length + 1,
       description: "",
+      ingredients: [],
     };
     updateMeal(mealIndex, { options: [...meal.options, newOpt] });
   }
 
-  function updateOption(mealIndex: number, optIndex: number, description: string) {
+  function updateOptionIngredients(
+    mealIndex: number,
+    optIndex: number,
+    ingredients: IngredientItemData[]
+  ) {
     const meal = plan.meals[mealIndex];
+    const description = ingredients
+      .map((ing) => `${ing.quantity}g ${ing.foodItemName}`)
+      .join(" + ");
     const options = meal.options.map((o, i) =>
-      i === optIndex ? { ...o, description } : o
+      i === optIndex ? { ...o, ingredients, description } : o
     );
     updateMeal(mealIndex, { options });
   }
@@ -262,7 +282,7 @@ export function NutritionEditor({ clientId, initialData }: NutritionEditorProps)
         onUpdate={updateMeal}
         onRemove={removeMeal}
         onAddOption={addOption}
-        onUpdateOption={updateOption}
+        onUpdateOptionIngredients={updateOptionIngredients}
         onAdd={() => addMeal(true)}
       />
 
@@ -273,7 +293,7 @@ export function NutritionEditor({ clientId, initialData }: NutritionEditorProps)
         onUpdate={updateMeal}
         onRemove={removeMeal}
         onAddOption={addOption}
-        onUpdateOption={updateOption}
+        onUpdateOptionIngredients={updateOptionIngredients}
         onAdd={() => addMeal(false)}
       />
 
@@ -360,7 +380,7 @@ function MealSection({
   onUpdate,
   onRemove,
   onAddOption,
-  onUpdateOption,
+  onUpdateOptionIngredients,
   onAdd,
 }: {
   title: string;
@@ -368,7 +388,7 @@ function MealSection({
   onUpdate: (index: number, update: Partial<MealData>) => void;
   onRemove: (index: number) => void;
   onAddOption: (mealIndex: number) => void;
-  onUpdateOption: (mealIndex: number, optIndex: number, desc: string) => void;
+  onUpdateOptionIngredients: (mealIndex: number, optIndex: number, ingredients: IngredientItemData[]) => void;
   onAdd: () => void;
 }) {
   return (
@@ -441,13 +461,13 @@ function MealSection({
             {/* Options */}
             <div className="space-y-1.5">
               {meal.options.map((opt, oi) => (
-                <div key={oi} className="flex gap-2 items-center">
-                  <span className="text-xs text-primary w-6">#{opt.optionNumber}</span>
-                  <Input
-                    placeholder="Opis opcije"
-                    value={opt.description}
-                    onChange={(e) => onUpdateOption(meal._index, oi, e.target.value)}
-                    className="h-8 text-sm"
+                <div key={oi} className="space-y-1 border-l-2 border-primary/30 pl-2">
+                  <span className="text-xs text-primary font-medium">#{opt.optionNumber}</span>
+                  <IngredientPicker
+                    items={opt.ingredients}
+                    onChange={(ingredients) =>
+                      onUpdateOptionIngredients(meal._index, oi, ingredients)
+                    }
                   />
                 </div>
               ))}
