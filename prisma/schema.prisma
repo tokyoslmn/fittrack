@@ -93,6 +93,7 @@ model MealOption {
   description  String
 
   meal         Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  items        MealOptionItem[]
 }
 
 model SupplementPlan {
@@ -306,4 +307,32 @@ model SupplementLog {
   createdAt       DateTime @default(now())
 
   user            User     @relation(fields: [userId], references: [id])
+}
+
+model FoodItem {
+  id            String   @id @default(cuid())
+  name          String
+  category      String?
+  defaultGrams  Float    @default(100)
+  defaultPieces Float?
+  protein       Float
+  carbs         Float
+  fat           Float
+  calories      Float
+  measuredRaw   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  mealOptionItems MealOptionItem[]
+}
+
+model MealOptionItem {
+  id           String   @id @default(cuid())
+  mealOptionId String
+  foodItemId   String
+  quantity     Float
+  orderIndex   Int      @default(0)
+
+  mealOption   MealOption @relation(fields: [mealOptionId], references: [id], onDelete: Cascade)
+  foodItem     FoodItem   @relation(fields: [foodItemId], references: [id], onDelete: Restrict)
 }
