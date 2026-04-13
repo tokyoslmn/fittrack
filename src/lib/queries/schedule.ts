@@ -11,22 +11,25 @@ export async function getTodaySchedule(userId: string) {
     where: { clientId: userId, active: true },
     include: {
       meals: {
-        include: {
-          options: {
-            orderBy: { optionNumber: "asc" },
-            include: {
-              items: {
-                include: { foodItem: true },
-                orderBy: { orderIndex: "asc" },
-              },
-            },
-          },
-        },
+        include: { options: { orderBy: { optionNumber: "asc" } } },
         orderBy: { orderIndex: "asc" },
       },
       supplements: true,
     },
   });
+
+  // Load food item details for meal options separately
+  if (nutritionPlan) {
+    for (const meal of nutritionPlan.meals) {
+      for (const option of meal.options) {
+        (option as any).items = await prisma.mealOptionItem.findMany({
+          where: { mealOptionId: option.id },
+          include: { foodItem: true },
+          orderBy: { orderIndex: "asc" },
+        });
+      }
+    }
+  }
 
   const workoutPlan = await prisma.workoutPlan.findFirst({
     where: { clientId: userId, active: true },
@@ -98,17 +101,7 @@ export async function getWeekSchedule(userId: string, weekOffset = 0) {
         where: { clientId: userId, active: true },
         include: {
           meals: {
-            include: {
-              options: {
-                orderBy: { optionNumber: "asc" },
-                include: {
-                  items: {
-                    include: { foodItem: true },
-                    orderBy: { orderIndex: "asc" },
-                  },
-                },
-              },
-            },
+            include: { options: { orderBy: { optionNumber: "asc" } } },
             orderBy: { orderIndex: "asc" },
           },
           supplements: true,
@@ -140,6 +133,19 @@ export async function getWeekSchedule(userId: string, weekOffset = 0) {
         where: { userId, date: { gte: monday, lt: sunday } },
       }),
     ]);
+
+  // Load food item details for meal options separately
+  if (nutritionPlan) {
+    for (const meal of nutritionPlan.meals) {
+      for (const option of meal.options) {
+        (option as any).items = await prisma.mealOptionItem.findMany({
+          where: { mealOptionId: option.id },
+          include: { foodItem: true },
+          orderBy: { orderIndex: "asc" },
+        });
+      }
+    }
+  }
 
   const DAY_NAMES = [
     "Ponedeljak", "Utorak", "Sreda", "Četvrtak", "Petak", "Subota", "Nedelja",
