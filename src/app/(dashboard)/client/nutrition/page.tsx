@@ -55,9 +55,30 @@ export default async function NutritionPage() {
                       <span className="text-xs font-medium text-primary">
                         Opcija {opt.optionNumber}
                       </span>
-                      <div className="text-sm text-foreground mt-0.5 rounded-md bg-card p-2">
-                        {opt.description}
-                      </div>
+                      {opt.items && opt.items.length > 0 ? (
+                        <div className="text-sm mt-0.5 rounded-md bg-card p-2 space-y-1">
+                          {opt.items.map((item: any) => {
+                            const factor = item.quantity / 100;
+                            return (
+                              <div key={item.id} className="flex items-center justify-between text-xs">
+                                <span>
+                                  {item.quantity}g {item.foodItem.name}
+                                  {item.foodItem.measuredRaw ? "" : " *"}
+                                </span>
+                                <span className="font-mono text-muted-foreground">
+                                  P:{Math.round(item.foodItem.protein * factor)}
+                                  {" "}C:{Math.round(item.foodItem.carbs * factor)}
+                                  {" "}F:{Math.round(item.foodItem.fat * factor)}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="text-sm text-foreground mt-0.5 rounded-md bg-card p-2">
+                          {opt.description}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

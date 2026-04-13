@@ -11,7 +11,17 @@ export async function getTodaySchedule(userId: string) {
     where: { clientId: userId, active: true },
     include: {
       meals: {
-        include: { options: { orderBy: { optionNumber: "asc" } } },
+        include: {
+          options: {
+            orderBy: { optionNumber: "asc" },
+            include: {
+              items: {
+                include: { foodItem: true },
+                orderBy: { orderIndex: "asc" },
+              },
+            },
+          },
+        },
         orderBy: { orderIndex: "asc" },
       },
       supplements: true,
@@ -88,7 +98,17 @@ export async function getWeekSchedule(userId: string, weekOffset = 0) {
         where: { clientId: userId, active: true },
         include: {
           meals: {
-            include: { options: { orderBy: { optionNumber: "asc" } } },
+            include: {
+              options: {
+                orderBy: { optionNumber: "asc" },
+                include: {
+                  items: {
+                    include: { foodItem: true },
+                    orderBy: { orderIndex: "asc" },
+                  },
+                },
+              },
+            },
             orderBy: { orderIndex: "asc" },
           },
           supplements: true,
@@ -98,7 +118,14 @@ export async function getWeekSchedule(userId: string, weekOffset = 0) {
         where: { clientId: userId, active: true },
         include: {
           schedule: {
-            include: { workout: true },
+            include: {
+              workout: {
+                include: {
+                  warmups: { orderBy: { orderIndex: "asc" } },
+                  exercises: { orderBy: { orderIndex: "asc" } },
+                },
+              },
+            },
             orderBy: { dayOfWeek: "asc" },
           },
         },
@@ -155,7 +182,21 @@ export async function getWeekSchedule(userId: string, weekOffset = 0) {
       dayOfWeek: i,
       isTrainingDay,
       workout: scheduleEntry?.workout
-        ? { name: scheduleEntry.workout.name, focus: scheduleEntry.workout.focus }
+        ? {
+            name: scheduleEntry.workout.name,
+            focus: scheduleEntry.workout.focus,
+            warmups: scheduleEntry.workout.warmups.map((w) => ({
+              name: w.name,
+              videoUrl: w.videoUrl,
+            })),
+            exercises: scheduleEntry.workout.exercises.map((e) => ({
+              exerciseId: e.exerciseId,
+              name: e.name,
+              sets: e.sets,
+              note: e.note,
+              videoUrl: e.videoUrl,
+            })),
+          }
         : null,
       label: scheduleEntry?.label ?? (isTrainingDay ? "Trening" : "Odmor"),
       restNotes: scheduleEntry?.restNotes ?? null,
