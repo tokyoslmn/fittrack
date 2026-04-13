@@ -29,7 +29,9 @@ async function main() {
   await prisma.exercise.deleteMany();
   await prisma.workout.deleteMany();
   await prisma.workoutPlan.deleteMany();
+  await prisma.mealOptionItem.deleteMany();
   await prisma.mealOption.deleteMany();
+  await prisma.foodItem.deleteMany();
   await prisma.meal.deleteMany();
   await prisma.supplementPlan.deleteMany();
   await prisma.nutritionPlan.deleteMany();
@@ -37,6 +39,45 @@ async function main() {
   await prisma.user.deleteMany();
 
   const hashedPassword = await bcrypt.hash("fittrack123", 10);
+
+  // ─── FOOD ITEMS ────────────────────────────────────────────
+  const foodItemsData = [
+    // Meso
+    { name: "Piletina bela (grudi)", category: "Meso", defaultGrams: 100, protein: 31, carbs: 0, fat: 3.6, calories: 165, measuredRaw: false },
+    { name: "Crveno meso (govedina)", category: "Meso", defaultGrams: 100, protein: 26, carbs: 0, fat: 15, calories: 250, measuredRaw: false },
+    { name: "Biftek", category: "Meso", defaultGrams: 150, protein: 28, carbs: 0, fat: 6, calories: 172, measuredRaw: false },
+    { name: "Tunjevina (konzerva)", category: "Meso", defaultGrams: 100, protein: 26, carbs: 0, fat: 1, calories: 116, measuredRaw: false },
+    // Jaja i mlečni
+    { name: "Jaje", category: "Jaja i mlečni", defaultGrams: 60, defaultPieces: 1, protein: 13, carbs: 1.1, fat: 11, calories: 155, measuredRaw: true },
+    { name: "Mladi sir", category: "Jaja i mlečni", defaultGrams: 100, protein: 11, carbs: 3.4, fat: 4, calories: 98, measuredRaw: false },
+    { name: "Proteinski jogurt/skyr", category: "Jaja i mlečni", defaultGrams: 150, defaultPieces: 1, protein: 10, carbs: 4, fat: 0.2, calories: 57, measuredRaw: false },
+    { name: "Grčki jogurt", category: "Jaja i mlečni", defaultGrams: 150, protein: 9, carbs: 3.6, fat: 5, calories: 97, measuredRaw: false },
+    // Ugljeni hidrati
+    { name: "Krompir", category: "Ugljeni hidrati", defaultGrams: 100, protein: 2, carbs: 17, fat: 0.1, calories: 77, measuredRaw: false },
+    { name: "Pirinač (beli)", category: "Ugljeni hidrati", defaultGrams: 100, protein: 2.7, carbs: 28, fat: 0.3, calories: 130, measuredRaw: false },
+    { name: "Integralni hleb", category: "Ugljeni hidrati", defaultGrams: 60, defaultPieces: 2, protein: 13, carbs: 43, fat: 3.4, calories: 247, measuredRaw: false },
+    { name: "Ovsene pahuljice", category: "Ugljeni hidrati", defaultGrams: 100, protein: 13, carbs: 66, fat: 7, calories: 379, measuredRaw: true },
+    { name: "Banana", category: "Voće", defaultGrams: 120, defaultPieces: 1, protein: 1.1, carbs: 23, fat: 0.3, calories: 89, measuredRaw: true },
+    { name: "Tost hleb", category: "Ugljeni hidrati", defaultGrams: 30, defaultPieces: 1, protein: 8, carbs: 49, fat: 3.5, calories: 261, measuredRaw: false },
+    // Masti i ulja
+    { name: "Maslinovo ulje", category: "Masti i ulja", defaultGrams: 10, protein: 0, carbs: 0, fat: 100, calories: 884, measuredRaw: true },
+    { name: "Kikiriki puter", category: "Masti i ulja", defaultGrams: 15, protein: 25, carbs: 20, fat: 50, calories: 588, measuredRaw: false },
+    { name: "Badem", category: "Orašasti plodovi", defaultGrams: 40, protein: 21, carbs: 22, fat: 49, calories: 579, measuredRaw: true },
+    // Voće i povrće
+    { name: "Borovnice", category: "Voće", defaultGrams: 100, protein: 0.7, carbs: 14, fat: 0.3, calories: 57, measuredRaw: true },
+    { name: "Zeleno povrće", category: "Povrće", defaultGrams: 100, protein: 2.9, carbs: 3.6, fat: 0.4, calories: 34, measuredRaw: false },
+    { name: "Salata (mešana)", category: "Povrće", defaultGrams: 100, protein: 1.3, carbs: 2.2, fat: 0.2, calories: 15, measuredRaw: true },
+    // Suplementi
+    { name: "Whey protein", category: "Suplementi", defaultGrams: 30, protein: 80, carbs: 8, fat: 3, calories: 380, measuredRaw: true },
+    { name: "EAA", category: "Suplementi", defaultGrams: 15, protein: 90, carbs: 0, fat: 0, calories: 360, measuredRaw: true },
+    { name: "Kreatin", category: "Suplementi", defaultGrams: 5, protein: 0, carbs: 0, fat: 0, calories: 0, measuredRaw: true },
+  ];
+
+  const foodItems: Record<string, string> = {};
+  for (const item of foodItemsData) {
+    const created = await prisma.foodItem.create({ data: item });
+    foodItems[item.name] = created.id;
+  }
 
   // Users
   const trainer = await prisma.user.create({
@@ -299,6 +340,119 @@ async function main() {
         },
       },
     });
+  }
+
+  // ─── LINK MEAL OPTIONS TO FOOD ITEMS ──────────────────────
+  const createdMeals = await prisma.meal.findMany({
+    where: { planId: nutritionPlan.id },
+    include: { options: true },
+    orderBy: [{ isTrainingDay: "desc" }, { orderIndex: "asc" }],
+  });
+
+  function findOption(mealName: string, isTraining: boolean, optNum: number) {
+    const meal = createdMeals.find(
+      (m) => m.name === mealName && m.isTrainingDay === isTraining
+    );
+    return meal?.options.find((o) => o.optionNumber === optNum);
+  }
+
+  type IngredientLink = [string, boolean, number, string, number];
+  const ingredientLinks: IngredientLink[] = [
+    // Training: Post workout opt 1
+    ["Post workout (Obrok 1)", true, 1, "Whey protein", 30],
+    ["Post workout (Obrok 1)", true, 1, "Banana", 200],
+    // Training: Ručak opt 1
+    ["Ručak (Obrok 2)", true, 1, "Piletina bela (grudi)", 250],
+    ["Ručak (Obrok 2)", true, 1, "Krompir", 250],
+    ["Ručak (Obrok 2)", true, 1, "Salata (mešana)", 100],
+    ["Ručak (Obrok 2)", true, 1, "Maslinovo ulje", 20],
+    // Training: Ručak opt 2
+    ["Ručak (Obrok 2)", true, 2, "Crveno meso (govedina)", 200],
+    ["Ručak (Obrok 2)", true, 2, "Krompir", 250],
+    ["Ručak (Obrok 2)", true, 2, "Salata (mešana)", 100],
+    ["Ručak (Obrok 2)", true, 2, "Maslinovo ulje", 20],
+    // Training: Užina opt 1
+    ["Užina (Obrok 3)", true, 1, "Tunjevina (konzerva)", 100],
+    ["Užina (Obrok 3)", true, 1, "Integralni hleb", 60],
+    ["Užina (Obrok 3)", true, 1, "Mladi sir", 50],
+    ["Užina (Obrok 3)", true, 1, "Salata (mešana)", 100],
+    ["Užina (Obrok 3)", true, 1, "Maslinovo ulje", 10],
+    // Training: Užina opt 3
+    ["Užina (Obrok 3)", true, 3, "Proteinski jogurt/skyr", 300],
+    ["Užina (Obrok 3)", true, 3, "Borovnice", 100],
+    ["Užina (Obrok 3)", true, 3, "Badem", 40],
+    // Training: Večera opt 1
+    ["Večera (Obrok 4)", true, 1, "Piletina bela (grudi)", 200],
+    ["Večera (Obrok 4)", true, 1, "Krompir", 150],
+    ["Večera (Obrok 4)", true, 1, "Zeleno povrće", 100],
+    ["Večera (Obrok 4)", true, 1, "Maslinovo ulje", 15],
+    // Training: Večera opt 2
+    ["Večera (Obrok 4)", true, 2, "Tunjevina (konzerva)", 100],
+    ["Večera (Obrok 4)", true, 2, "Jaje", 120],
+    ["Večera (Obrok 4)", true, 2, "Pirinač (beli)", 80],
+    ["Večera (Obrok 4)", true, 2, "Zeleno povrće", 100],
+    // Training: Večera opt 3
+    ["Večera (Obrok 4)", true, 3, "Biftek", 150],
+    ["Večera (Obrok 4)", true, 3, "Krompir", 200],
+    ["Večera (Obrok 4)", true, 3, "Salata (mešana)", 100],
+    // Rest: Doručak opt 2
+    ["Doručak", false, 2, "Proteinski jogurt/skyr", 150],
+    ["Doručak", false, 2, "Borovnice", 100],
+    ["Doručak", false, 2, "Badem", 30],
+    // Rest: Doručak opt 3
+    ["Doručak", false, 3, "Grčki jogurt", 150],
+    ["Doručak", false, 3, "Whey protein", 15],
+    ["Doručak", false, 3, "Kikiriki puter", 15],
+    ["Doručak", false, 3, "Borovnice", 100],
+    // Rest: Ručak opt 1
+    ["Ručak (Obrok 2)", false, 1, "Piletina bela (grudi)", 250],
+    ["Ručak (Obrok 2)", false, 1, "Krompir", 250],
+    ["Ručak (Obrok 2)", false, 1, "Salata (mešana)", 100],
+    ["Ručak (Obrok 2)", false, 1, "Maslinovo ulje", 20],
+    // Rest: Ručak opt 2
+    ["Ručak (Obrok 2)", false, 2, "Crveno meso (govedina)", 200],
+    ["Ručak (Obrok 2)", false, 2, "Krompir", 250],
+    ["Ručak (Obrok 2)", false, 2, "Salata (mešana)", 100],
+    ["Ručak (Obrok 2)", false, 2, "Maslinovo ulje", 20],
+    // Rest: Užina opt 1
+    ["Užina (Obrok 3)", false, 1, "Tunjevina (konzerva)", 100],
+    ["Užina (Obrok 3)", false, 1, "Integralni hleb", 60],
+    ["Užina (Obrok 3)", false, 1, "Mladi sir", 50],
+    ["Užina (Obrok 3)", false, 1, "Salata (mešana)", 100],
+    ["Užina (Obrok 3)", false, 1, "Maslinovo ulje", 10],
+    // Rest: Užina opt 3
+    ["Užina (Obrok 3)", false, 3, "Proteinski jogurt/skyr", 300],
+    ["Užina (Obrok 3)", false, 3, "Borovnice", 100],
+    ["Užina (Obrok 3)", false, 3, "Badem", 40],
+    // Rest: Večera opt 1
+    ["Večera (Obrok 4)", false, 1, "Piletina bela (grudi)", 200],
+    ["Večera (Obrok 4)", false, 1, "Krompir", 150],
+    ["Večera (Obrok 4)", false, 1, "Zeleno povrće", 100],
+    ["Večera (Obrok 4)", false, 1, "Maslinovo ulje", 15],
+    // Rest: Večera opt 2
+    ["Večera (Obrok 4)", false, 2, "Tunjevina (konzerva)", 100],
+    ["Večera (Obrok 4)", false, 2, "Jaje", 120],
+    ["Večera (Obrok 4)", false, 2, "Pirinač (beli)", 80],
+    ["Večera (Obrok 4)", false, 2, "Zeleno povrće", 100],
+    // Rest: Večera opt 3
+    ["Večera (Obrok 4)", false, 3, "Biftek", 150],
+    ["Večera (Obrok 4)", false, 3, "Krompir", 200],
+    ["Večera (Obrok 4)", false, 3, "Salata (mešana)", 100],
+  ];
+
+  for (const [mealName, isTraining, optNum, foodName, qty] of ingredientLinks) {
+    const option = findOption(mealName, isTraining, optNum);
+    const foodItemId = foodItems[foodName];
+    if (option && foodItemId) {
+      await prisma.mealOptionItem.create({
+        data: {
+          mealOptionId: option.id,
+          foodItemId,
+          quantity: qty,
+          orderIndex: 0,
+        },
+      });
+    }
   }
 
   // Supplements
